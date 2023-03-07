@@ -1,3 +1,4 @@
+import wave
 import numpy as np
 import pandas as pd
 import sys
@@ -50,7 +51,8 @@ while time.time() < end_time:
 		if "eegPower" in dict:
 			waveDict=dict['eegPower'];
 			eSenseDict=dict['eSense'];
-		outputstr=str(timediff)+ ", "+str(waveDict['lowGamma'])+", " + str(waveDict['highGamma'])+", "+ str(waveDict['highAlpha'])+", "+str(waveDict['delta'])+", "+ str(waveDict['highBeta'])+", "+str(waveDict['lowAlpha'])+", "+str(waveDict['lowBeta'])+ ", "+str(waveDict['theta']);
+		
+		
 		time_array = np.append(time_array, timediff);
 		#make sure the waveDict[WaveType] is before the value in the np.apppend function
 		#see highGammaValues for example. 
@@ -63,10 +65,12 @@ while time.time() < end_time:
 		highBeta_values = np.append( [waveDict['highBeta']], highBeta_values);
 		theta_values = np.append([waveDict['theta']], theta_values);
 		lowAlpha_values = np.append([waveDict['lowAlpha']], lowAlpha_values);
+		
+		#print the output of the last reading onto the console. 
+		outputstr=f"Elapsed Time: {time_array[-1]}  loGamma: {waveDict['lowGamma'][-1]} hiGamma: {waveDict['highGamma'][-1]} hiAlpha: {waveDict['highAlpha'][-1]} Delta:{waveDict['delta'][-1]} hiBeta: {waveDict['highBeta'][-1]} loAlpha:{waveDict['lowAlpha'][-1]} loBeta:{waveDict['lowBeta'][-1]} theta:{waveDict['theta'][-1]}"
 		print (outputstr);
-		if outfile!="null":	
-			outfptr.write(outputstr+"\n");		
-
+		
+		
 person_name = input('Enter the name of the person: ')
 times_to_invalidate = input('What timestamps should not be recorded? ->')
 
@@ -75,13 +79,13 @@ times_to_invalidate = input('What timestamps should not be recorded? ->')
 from numpy import nan as Nan
 import pandas as pd 
 
-
+#create the exported csv file
 dataset = pd.DataFrame()
+dataset['time'] = time_array
+
 for attr,array  in waveDict.items():
 	dataset[attr] = array;
 
-#Appending and storing the data in the same csv
-#dataset.append(data_row)
 dataset.to_csv('data_eeg.csv')      
     
 tn.close();
