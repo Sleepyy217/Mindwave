@@ -31,12 +31,13 @@ outfile="null";
 if len(sys.argv)>1:
 	outfile=sys.argv[len(sys.argv)-1];
 	outfptr=open(outfile,'w');
+	outfptr.write('time, signalLevel, blinkStrength, attention, meditation, lowGamma, highGamma, highAlpha, delta, highBeta, lowAlpha, lowBeta, theta\n')
 
 eSenseDict={'attention':0, 'meditation':0};
 waveDict={'lowGamma':0, 'highGamma':0, 'highAlpha':0, 'delta':0, 'highBeta':0, 'lowAlpha':0, 'lowBeta':0, 'theta':0};
 signalLevel=0;
 
-end_time = start + 30;
+end_time = start + int(sys.argv[1]);
 while time.time() < end_time:
 	blinkStrength=0;
 	line=tn.read_until(('\r').encode('ascii'));
@@ -50,7 +51,7 @@ while time.time() < end_time:
 		if "eegPower" in dict:
 			waveDict=dict['eegPower'];
 			eSenseDict=dict['eSense'];
-		outputstr=str(timediff)+ ", "+ str(signalLevel)+", "+str(blinkStrength)+", " + str(eSenseDict['attention']) + ", " + str(eSenseDict['meditation']) + ", START: "+str(waveDict['lowGamma'])+", " + str(waveDict['highGamma'])+", "+ str(waveDict['highAlpha'])+", "+str(waveDict['delta'])+", "+ str(waveDict['highBeta'])+", "+str(waveDict['lowAlpha'])+", "+str(waveDict['lowBeta'])+ ", "+str(waveDict['theta']);
+		outputstr=str(timediff)+ ", "+ str(signalLevel)+", "+str(blinkStrength)+", " + str(eSenseDict['attention']) + ", " + str(eSenseDict['meditation']) +", "+str(waveDict['lowGamma'])+", " + str(waveDict['highGamma'])+", "+ str(waveDict['highAlpha'])+", "+str(waveDict['delta'])+", "+ str(waveDict['highBeta'])+", "+str(waveDict['lowAlpha'])+", "+str(waveDict['lowBeta'])+ ", "+str(waveDict['theta']);
 		time_array = np.append(time_array, [timediff]);
 		#make sure the waveDict[WaveType] is before the value in the np.apppend function
 		#see highGammaValues for example. 
@@ -84,9 +85,6 @@ data_row = pd.DataFrame({'Name': person_name, 'attention': [attention_values], '
 from numpy import nan as Nan
 import pandas as pd 
 dataset = pd.DataFrame()
-dataset = dataset.append(pd.Series([blink_label, person_name, [attention_values], [blinkStrength_values], [delta_values]
-	, [highAlpha_values], [highBeta_values], [highGamma_values], [lowAlpha_values], [lowBeta_values], [lowGamma_values], [meditation_values], 
-	[theta_values], [time_array], time_starting, lefty_righty, time_blinking], index=['LOR', 'Name', 'attention', 'blinkStrength', 'delta', 'highAlpha', 'highBeta', 'highGamma', 'lowAlpha', 'lowBeta', 'lowGamma', 'meditation', 'theta', 'time', 'time_start', 'LTYRTY', 'time_blink']),  ignore_index = True)
 
 #Appending and storing the data in the same csv
 #dataset.append(data_row)
